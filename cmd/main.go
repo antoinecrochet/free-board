@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"os"
 
+	"github.com/antoinecrochet/free-board/internal/adapter/primary/api"
 	"github.com/antoinecrochet/free-board/internal/adapter/secondary/mariadb"
 	"github.com/antoinecrochet/free-board/internal/core/service"
 	"github.com/joho/godotenv"
@@ -24,9 +25,6 @@ func main() {
 	dataPort := mariadb.NewMariaDbProvider(dbUser, dbPassword, dbName)
 	boardService := service.NewBoard(dataPort)
 
-	err = boardService.SaveTimeSheet(2, "2024-10-10", 8.0)
-	if err != nil {
-		slog.Error("Error saving timesheet", "error", err)
-	}
-	slog.Info("Timesheet saved successfully")
+	app := api.NewApplication(boardService)
+	app.StartServer()
 }
