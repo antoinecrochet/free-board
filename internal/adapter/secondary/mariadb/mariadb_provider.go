@@ -40,7 +40,24 @@ func (m *MariaDbProvider) FindByUserID(userId int64) ([]*model.TimeSheet, error)
 	return timeSheets, nil
 }
 
+func (m *MariaDbProvider) FindByUserIDAndDay(userId int64, day string) (*model.TimeSheet, error) {
+	row := m.db.QueryRow("SELECT id, user_id, day, hours FROM timesheet WHERE user_id = ? AND day = ?", userId, day)
+	var ts model.TimeSheet
+	if err := row.Scan(&ts.ID, &ts.UserID, &ts.Day, &ts.Hours); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &ts, nil
+}
+
 func (m *MariaDbProvider) Save(timeSheet *model.TimeSheet) error {
 	_, err := m.db.Exec("INSERT INTO timesheet (user_id, day, hours) VALUES (?, ?, ?)", timeSheet.UserID, timeSheet.Day, timeSheet.Hours)
+	return err
+}
+
+func (m *MariaDbProvider) Update(timeSheet *model.TimeSheet) error {
+	_, err := m.db.Exec("UPDATE timesheet SET user_id = ?, day = ?, hours = ? WHERE id = ?", timeSheet.UserID, timeSheet.Day, timeSheet.Hours, timeSheet.ID)
 	return err
 }

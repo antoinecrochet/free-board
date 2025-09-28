@@ -11,7 +11,6 @@ import (
 )
 
 func main() {
-	slog.Info("Starting application...")
 	err := godotenv.Load()
 	if err != nil {
 		slog.Error("Error loading .env file")

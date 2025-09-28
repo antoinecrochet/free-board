@@ -6,5 +6,7 @@ import "github.com/antoinecrochet/free-board/internal/core/model"
 
 type TimeSheetPort interface {
 	FindByUserID(userId int64) ([]*model.TimeSheet, error)
+	FindByUserIDAndDay(userId int64, day string) (*model.TimeSheet, error)
 	Save(timeSheet *model.TimeSheet) error
+	Update(timeSheet *model.TimeSheet) error
 }
