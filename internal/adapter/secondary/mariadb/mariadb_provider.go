@@ -21,6 +21,18 @@ func NewMariaDbProvider(user string, password string, databaseName string) *Mari
 	return &MariaDbProvider{db: db}
 }
 
+func (m *MariaDbProvider) FindByID(id int64) (*model.TimeSheet, error) {
+	row := m.db.QueryRow("SELECT id, user_id, day, hours FROM timesheet WHERE id = ?", id)
+	var ts model.TimeSheet
+	if err := row.Scan(&ts.ID, &ts.UserID, &ts.Day, &ts.Hours); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &ts, nil
+}
+
 func (m *MariaDbProvider) FindByUserID(userId int64) ([]*model.TimeSheet, error) {
 	rows, err := m.db.Query("SELECT id, user_id, day, hours FROM timesheet WHERE user_id = ?", userId)
 	if err != nil {

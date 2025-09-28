@@ -37,6 +37,17 @@ func (b *Board) SaveTimeSheet(userId int64, day string, hours float64) error {
 	return b.timeSheetPort.Save(&model.TimeSheet{UserID: userId, Day: day, Hours: hours})
 }
 
-func (b *Board) UpdateTimeSheet(userId int64, day string, hours float64) error {
-	return nil
+func (b *Board) UpdateTimeSheetHours(userId int64, timeSheetID int64, hours float64) error {
+	timeSheet, err := b.timeSheetPort.FindByID(timeSheetID)
+	if err != nil {
+		slog.Error("Error finding timesheet by id", "timeSheetID", timeSheetID, "error", err)
+		return err
+	}
+	if timeSheet == nil || timeSheet.UserID != userId {
+		return &model.NotFoundError{Code: "timesheet-not-found"}
+	}
+
+	// Update hours
+	timeSheet.Hours = hours
+	return b.timeSheetPort.Update(timeSheet)
 }

@@ -9,7 +9,12 @@ type CreateTimeSheetRequest struct {
 	Hours float64 `json:"hours" binding:"required,gte=0,lte=24"`
 }
 
+type UpdateTimeSheetHoursRequest struct {
+	Hours float64 `json:"hours" binding:"required,gte=0,lte=24"`
+}
+
 type TimeSheetResponse struct {
+	ID    int64   `json:"id,omitempty"`
 	Day   string  `json:"day"`
 	Hours float64 `json:"hours"`
 }

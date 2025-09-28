@@ -8,6 +8,7 @@ func MapToApi(timeSheets []*model.TimeSheet) []TimeSheetResponse {
 	responses := make([]TimeSheetResponse, len(timeSheets))
 	for i, ts := range timeSheets {
 		responses[i] = TimeSheetResponse{
+			ID:    ts.ID,
 			Day:   ts.Day,
 			Hours: ts.Hours,
 		}
