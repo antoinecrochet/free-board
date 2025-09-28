@@ -24,6 +24,18 @@ func (b *Board) GetTimeSheets(userId int64) ([]*model.TimeSheet, error) {
 	return timeSheets, nil
 }
 
+func (b *Board) GetTimeSheet(userId int64, timeSheetID int64) (*model.TimeSheet, error) {
+	timeSheet, err := b.timeSheetPort.FindByID(timeSheetID)
+	if err != nil {
+		slog.Error("Error finding timesheet by id", "timeSheetID", timeSheetID, "error", err)
+		return nil, err
+	}
+	if timeSheet == nil || timeSheet.UserID != userId {
+		return nil, &model.NotFoundError{Code: "timesheet-not-found"}
+	}
+	return timeSheet, nil
+}
+
 func (b *Board) SaveTimeSheet(userId int64, day string, hours float64) error {
 	timeSheet, err := b.timeSheetPort.FindByUserIDAndDay(userId, day)
 	if err != nil {

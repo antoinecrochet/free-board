@@ -53,7 +53,7 @@ func (a *Application) StartServer() (err error) {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "internal-server-error"})
 			return
 		}
-		c.JSON(http.StatusOK, TimeSheetsResponse{TimeSheets: MapToApi(timeSheets)})
+		c.JSON(http.StatusOK, TimeSheetsResponse{TimeSheets: MapTimeSheetArrayToApi(timeSheets)})
 	})
 
 	router.PATCH("/timesheets/:id", func(c *gin.Context) {
@@ -79,6 +79,27 @@ func (a *Application) StartServer() (err error) {
 			return
 		}
 		c.Status(http.StatusNoContent)
+	})
+
+	router.GET("/timesheets/:id", func(c *gin.Context) {
+		id, err := strconv.Atoi(c.Param("id"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid-id"})
+			return
+		}
+
+		// For simplicity, we use a hardcoded user ID
+		timeSheet, err := a.board.GetTimeSheet(1, int64(id))
+		if err != nil {
+			if _, ok := err.(*model.NotFoundError); ok {
+				c.JSON(http.StatusNotFound, ErrorResponse{Error: err.(*model.NotFoundError).ErrorCode()})
+				return
+			}
+			slog.Error("Error while getting timesheet", "error", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "internal-server-error"})
+			return
+		}
+		c.JSON(http.StatusOK, MapTimeSheetToApi(timeSheet))
 	})
 
 	return router.Run()
