@@ -73,3 +73,8 @@ func (m *MariaDbProvider) Update(timeSheet *model.TimeSheet) error {
 	_, err := m.db.Exec("UPDATE timesheet SET user_id = ?, day = ?, hours = ? WHERE id = ?", timeSheet.UserID, timeSheet.Day, timeSheet.Hours, timeSheet.ID)
 	return err
 }
+
+func (m *MariaDbProvider) Delete(id int64) error {
+	_, err := m.db.Exec("DELETE FROM timesheet WHERE id = ?", id)
+	return err
+}

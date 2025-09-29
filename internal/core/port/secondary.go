@@ -10,4 +10,5 @@ type TimeSheetPort interface {
 	FindByUserIDAndDay(userId int64, day string) (*model.TimeSheet, error)
 	Save(timeSheet *model.TimeSheet) error
 	Update(timeSheet *model.TimeSheet) error
+	Delete(id int64) error
 }

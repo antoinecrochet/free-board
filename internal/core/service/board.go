@@ -63,3 +63,16 @@ func (b *Board) UpdateTimeSheetHours(userId int64, timeSheetID int64, hours floa
 	timeSheet.Hours = hours
 	return b.timeSheetPort.Update(timeSheet)
 }
+
+func (b *Board) DeleteTimeSheet(userId int64, timeSheetID int64) error {
+	timeSheet, err := b.timeSheetPort.FindByID(timeSheetID)
+	if err != nil {
+		slog.Error("Error finding timesheet by id", "timeSheetID", timeSheetID, "error", err)
+		return err
+	}
+	if timeSheet == nil || timeSheet.UserID != userId {
+		return &model.NotFoundError{Code: "timesheet-not-found"}
+	}
+
+	return b.timeSheetPort.Delete(timeSheetID)
+}

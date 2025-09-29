@@ -9,4 +9,5 @@ type BoardManager interface {
 	GetTimeSheet(userId int64, timeSheetID int64) (*model.TimeSheet, error)
 	SaveTimeSheet(userId int64, day string, hours float64) error
 	UpdateTimeSheetHours(userId int64, timeSheetID int64, hours float64) error
+	DeleteTimeSheet(userId int64, timeSheetID int64) error
 }
