@@ -15,6 +15,44 @@ func (a *Application) HealthCheck(c *gin.Context) {
 	})
 }
 
+func (a *Application) GetTimeSheets(c *gin.Context) {
+	var params GetTimeSheetsQueryParams
+	if err := c.ShouldBindQuery(&params); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// For simplicity, we use a hardcoded user ID
+	timeSheets, err := a.board.GetTimeSheets(1, params.From, params.To)
+	if err != nil {
+		slog.Error("Error while getting timesheets", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal-server-error"})
+		return
+	}
+	c.JSON(http.StatusOK, TimeSheetsResponse{TimeSheets: MapTimeSheetArrayToApi(timeSheets)})
+}
+
+func (a *Application) GetTimeSheet(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid-id"})
+		return
+	}
+
+	// For simplicity, we use a hardcoded user ID
+	timeSheet, err := a.board.GetTimeSheet(1, int64(id))
+	if err != nil {
+		if _, ok := err.(*model.NotFoundError); ok {
+			c.JSON(http.StatusNotFound, ErrorResponse{Error: err.(*model.NotFoundError).ErrorCode()})
+			return
+		}
+		slog.Error("Error while getting timesheet", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal-server-error"})
+		return
+	}
+	c.JSON(http.StatusOK, MapTimeSheetToApi(timeSheet))
+}
+
 func (a *Application) CreateTimeSheet(c *gin.Context) {
 	var req CreateTimeSheetRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -32,17 +70,6 @@ func (a *Application) CreateTimeSheet(c *gin.Context) {
 		return
 	}
 	c.Status(http.StatusCreated)
-}
-
-func (a *Application) GetTimeSheets(c *gin.Context) {
-	// For simplicity, we use a hardcoded user ID
-	timeSheets, err := a.board.GetTimeSheets(1)
-	if err != nil {
-		slog.Error("Error while getting timesheets", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal-server-error"})
-		return
-	}
-	c.JSON(http.StatusOK, TimeSheetsResponse{TimeSheets: MapTimeSheetArrayToApi(timeSheets)})
 }
 
 func (a *Application) PatchTimeSheet(c *gin.Context) {
@@ -68,27 +95,6 @@ func (a *Application) PatchTimeSheet(c *gin.Context) {
 		return
 	}
 	c.Status(http.StatusNoContent)
-}
-
-func (a *Application) GetTimeSheet(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid-id"})
-		return
-	}
-
-	// For simplicity, we use a hardcoded user ID
-	timeSheet, err := a.board.GetTimeSheet(1, int64(id))
-	if err != nil {
-		if _, ok := err.(*model.NotFoundError); ok {
-			c.JSON(http.StatusNotFound, ErrorResponse{Error: err.(*model.NotFoundError).ErrorCode()})
-			return
-		}
-		slog.Error("Error while getting timesheet", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal-server-error"})
-		return
-	}
-	c.JSON(http.StatusOK, MapTimeSheetToApi(timeSheet))
 }
 
 func (a *Application) DeleteTimeSheet(c *gin.Context) {

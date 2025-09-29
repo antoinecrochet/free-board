@@ -15,8 +15,8 @@ func NewBoard(timeSheetPort port.TimeSheetPort) *Board {
 	return &Board{timeSheetPort: timeSheetPort}
 }
 
-func (b *Board) GetTimeSheets(userId int64) ([]*model.TimeSheet, error) {
-	timeSheets, err := b.timeSheetPort.FindByUserID(userId)
+func (b *Board) GetTimeSheets(userId int64, from string, to string) ([]*model.TimeSheet, error) {
+	timeSheets, err := b.timeSheetPort.FindByUserID(userId, from, to)
 	if err != nil {
 		slog.Error("Error getting timesheets for user", "userId", userId, "error", err)
 		return nil, err

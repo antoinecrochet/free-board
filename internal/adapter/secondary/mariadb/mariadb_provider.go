@@ -23,45 +23,56 @@ func NewMariaDbProvider(user string, password string, databaseName string) *Mari
 
 func (m *MariaDbProvider) FindByID(id int64) (*model.TimeSheet, error) {
 	row := m.db.QueryRow("SELECT id, user_id, day, hours FROM timesheet WHERE id = ?", id)
-	var ts model.TimeSheet
+	ts := new(model.TimeSheet)
 	if err := row.Scan(&ts.ID, &ts.UserID, &ts.Day, &ts.Hours); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 		return nil, err
 	}
-	return &ts, nil
+	return ts, nil
 }
 
-func (m *MariaDbProvider) FindByUserID(userId int64) ([]*model.TimeSheet, error) {
-	rows, err := m.db.Query("SELECT id, user_id, day, hours FROM timesheet WHERE user_id = ?", userId)
+func (m *MariaDbProvider) FindByUserID(userId int64, from string, to string) ([]*model.TimeSheet, error) {
+	// Set default values for from and to if empty
+	from = defaultIfEmpty(from, "0000-01-01")
+	to = defaultIfEmpty(to, "9999-12-31")
+
+	rows, err := m.db.Query("SELECT id, user_id, day, hours FROM timesheet WHERE user_id = ? AND day BETWEEN ? AND ?", userId, from, to)
 	if err != nil {
 		return nil, err
 	}
-
 	defer rows.Close()
+
 	var timeSheets []*model.TimeSheet
 	for rows.Next() {
-		var ts model.TimeSheet
+		ts := new(model.TimeSheet)
 		if err := rows.Scan(&ts.ID, &ts.UserID, &ts.Day, &ts.Hours); err != nil {
 			return nil, err
 		}
-		timeSheets = append(timeSheets, &ts)
+		timeSheets = append(timeSheets, ts)
 	}
 
 	return timeSheets, nil
 }
 
+func defaultIfEmpty(value string, defaultValue string) string {
+	if value == "" {
+		return defaultValue
+	}
+	return value
+}
+
 func (m *MariaDbProvider) FindByUserIDAndDay(userId int64, day string) (*model.TimeSheet, error) {
 	row := m.db.QueryRow("SELECT id, user_id, day, hours FROM timesheet WHERE user_id = ? AND day = ?", userId, day)
-	var ts model.TimeSheet
+	ts := new(model.TimeSheet)
 	if err := row.Scan(&ts.ID, &ts.UserID, &ts.Day, &ts.Hours); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 		return nil, err
 	}
-	return &ts, nil
+	return ts, nil
 }
 
 func (m *MariaDbProvider) Save(timeSheet *model.TimeSheet) error {
