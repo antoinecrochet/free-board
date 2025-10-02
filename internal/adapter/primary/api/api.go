@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/antoinecrochet/free-board/internal/core/port"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,6 +16,14 @@ func NewApplication(board port.BoardManager) *Application {
 
 func (a *Application) StartServer() (err error) {
 	router := gin.Default()
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:4200"},
+		AllowMethods:     []string{"GET", "POST", "PATCH", "DELETE"},
+		AllowHeaders:     []string{"Origin", "Authorization", "Content-Type"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
+
 	router.GET("/health", a.HealthCheck)
 
 	router.GET("/timesheets", a.GetTimeSheets)
