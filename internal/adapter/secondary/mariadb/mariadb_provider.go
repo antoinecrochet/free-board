@@ -75,9 +75,12 @@ func (m *MariaDbProvider) FindByUserIDAndDay(userId int64, day string) (*model.T
 	return ts, nil
 }
 
-func (m *MariaDbProvider) Save(timeSheet *model.TimeSheet) error {
-	_, err := m.db.Exec("INSERT INTO timesheet (user_id, day, hours) VALUES (?, ?, ?)", timeSheet.UserID, timeSheet.Day, timeSheet.Hours)
-	return err
+func (m *MariaDbProvider) Save(timeSheet *model.TimeSheet) (int64, error) {
+	result, err := m.db.Exec("INSERT INTO timesheet (user_id, day, hours) VALUES (?, ?, ?)", timeSheet.UserID, timeSheet.Day, timeSheet.Hours)
+	if err != nil {
+		return -1, err
+	}
+	return result.LastInsertId()
 }
 
 func (m *MariaDbProvider) Update(timeSheet *model.TimeSheet) error {

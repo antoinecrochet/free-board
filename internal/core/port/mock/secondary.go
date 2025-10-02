@@ -40,19 +40,48 @@ func (m *MockTimeSheetPort) EXPECT() *MockTimeSheetPortMockRecorder {
 	return m.recorder
 }
 
-// FindByUserID mocks base method.
-func (m *MockTimeSheetPort) FindByUserID(userId int64) ([]*model.TimeSheet, error) {
+// Delete mocks base method.
+func (m *MockTimeSheetPort) Delete(id int64) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindByUserID", userId)
+	ret := m.ctrl.Call(m, "Delete", id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Delete indicates an expected call of Delete.
+func (mr *MockTimeSheetPortMockRecorder) Delete(id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockTimeSheetPort)(nil).Delete), id)
+}
+
+// FindByID mocks base method.
+func (m *MockTimeSheetPort) FindByID(id int64) (*model.TimeSheet, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindByID", id)
+	ret0, _ := ret[0].(*model.TimeSheet)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindByID indicates an expected call of FindByID.
+func (mr *MockTimeSheetPortMockRecorder) FindByID(id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByID", reflect.TypeOf((*MockTimeSheetPort)(nil).FindByID), id)
+}
+
+// FindByUserID mocks base method.
+func (m *MockTimeSheetPort) FindByUserID(userId int64, from, to string) ([]*model.TimeSheet, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindByUserID", userId, from, to)
 	ret0, _ := ret[0].([]*model.TimeSheet)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FindByUserID indicates an expected call of FindByUserID.
-func (mr *MockTimeSheetPortMockRecorder) FindByUserID(userId any) *gomock.Call {
+func (mr *MockTimeSheetPortMockRecorder) FindByUserID(userId, from, to any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByUserID", reflect.TypeOf((*MockTimeSheetPort)(nil).FindByUserID), userId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByUserID", reflect.TypeOf((*MockTimeSheetPort)(nil).FindByUserID), userId, from, to)
 }
 
 // FindByUserIDAndDay mocks base method.
@@ -71,11 +100,12 @@ func (mr *MockTimeSheetPortMockRecorder) FindByUserIDAndDay(userId, day any) *go
 }
 
 // Save mocks base method.
-func (m *MockTimeSheetPort) Save(timeSheet *model.TimeSheet) error {
+func (m *MockTimeSheetPort) Save(timeSheet *model.TimeSheet) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Save", timeSheet)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // Save indicates an expected call of Save.

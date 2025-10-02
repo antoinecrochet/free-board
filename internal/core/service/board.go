@@ -36,14 +36,14 @@ func (b *Board) GetTimeSheet(userId int64, timeSheetID int64) (*model.TimeSheet,
 	return timeSheet, nil
 }
 
-func (b *Board) SaveTimeSheet(userId int64, day string, hours float64) error {
+func (b *Board) SaveTimeSheet(userId int64, day string, hours float64) (int64, error) {
 	timeSheet, err := b.timeSheetPort.FindByUserIDAndDay(userId, day)
 	if err != nil {
 		slog.Error("Error finding timesheet for user", "userId", userId, "day", day, "error", err)
-		return err
+		return -1, err
 	}
 	if timeSheet != nil {
-		return &model.AlreadExistsError{Code: "timesheet-already-exists"}
+		return -1, &model.AlreadExistsError{Code: "timesheet-already-exists"}
 	}
 
 	return b.timeSheetPort.Save(&model.TimeSheet{UserID: userId, Day: day, Hours: hours})

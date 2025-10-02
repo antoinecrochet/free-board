@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"log/slog"
 	"net/http"
 	"strconv"
@@ -60,7 +61,8 @@ func (a *Application) CreateTimeSheet(c *gin.Context) {
 		return
 	}
 	// For simplicity, we use a hardcoded user ID
-	if err := a.board.SaveTimeSheet(1, req.Day, req.Hours); err != nil {
+	id, err := a.board.SaveTimeSheet(1, req.Day, req.Hours)
+	if err != nil {
 		if _, ok := err.(*model.AlreadExistsError); ok {
 			c.JSON(http.StatusConflict, ErrorResponse{Error: err.(*model.AlreadExistsError).ErrorCode()})
 			return
@@ -69,6 +71,13 @@ func (a *Application) CreateTimeSheet(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal-server-error"})
 		return
 	}
+
+	scheme := "http"
+	if c.Request.TLS != nil {
+		scheme = "https"
+	}
+
+	c.Header("Location", fmt.Sprintf("%s://%s/timesheets/%d", scheme, c.Request.Host, id))
 	c.Status(http.StatusCreated)
 }
 
