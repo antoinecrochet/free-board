@@ -19,7 +19,7 @@ func main() {
 	dbUser := os.Getenv("DATABASE_USER")
 	dbPassword := os.Getenv("DATABASE_PASSWORD")
 	dbName := os.Getenv("DATABASE_NAME")
-	keycloakServerUrl := os.Getenv("KEYCLOAK_SERVER_URL")
+	keycloakServerUrl := os.Getenv("KEYCLOAK_AUTH_SERVER_URL")
 	keycloakRealm := os.Getenv("KEYCLOAK_REALM")
 
 	if dbUser == "" || dbPassword == "" || dbName == "" || keycloakServerUrl == "" || keycloakRealm == "" {

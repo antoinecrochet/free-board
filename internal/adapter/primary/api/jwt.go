@@ -61,6 +61,17 @@ func JWTMiddleware(keycloakServerUrl string, keycloakRealm string, jwkSet map[st
 			return
 		}
 
+		// Extract the preferred_username claim from the token
+		username, ok := token.Claims.(jwt.MapClaims)["preferred_username"].(string)
+		if !ok {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "preferred_username not found in token"})
+			c.Abort()
+			return
+		}
+
+		// Store the username in the request context
+		c.Set("username", username)
+
 		// Continue with the next middleware or route handler
 		c.Next()
 	}

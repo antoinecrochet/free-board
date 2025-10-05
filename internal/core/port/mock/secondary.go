@@ -69,34 +69,34 @@ func (mr *MockTimeSheetPortMockRecorder) FindByID(id any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByID", reflect.TypeOf((*MockTimeSheetPort)(nil).FindByID), id)
 }
 
-// FindByUserID mocks base method.
-func (m *MockTimeSheetPort) FindByUserID(userId int64, from, to string) ([]*model.TimeSheet, error) {
+// FindByUsername mocks base method.
+func (m *MockTimeSheetPort) FindByUsername(username, from, to string) ([]*model.TimeSheet, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindByUserID", userId, from, to)
+	ret := m.ctrl.Call(m, "FindByUsername", username, from, to)
 	ret0, _ := ret[0].([]*model.TimeSheet)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// FindByUserID indicates an expected call of FindByUserID.
-func (mr *MockTimeSheetPortMockRecorder) FindByUserID(userId, from, to any) *gomock.Call {
+// FindByUsername indicates an expected call of FindByUsername.
+func (mr *MockTimeSheetPortMockRecorder) FindByUsername(username, from, to any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByUserID", reflect.TypeOf((*MockTimeSheetPort)(nil).FindByUserID), userId, from, to)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByUsername", reflect.TypeOf((*MockTimeSheetPort)(nil).FindByUsername), username, from, to)
 }
 
-// FindByUserIDAndDay mocks base method.
-func (m *MockTimeSheetPort) FindByUserIDAndDay(userId int64, day string) (*model.TimeSheet, error) {
+// FindByUsernameAndDay mocks base method.
+func (m *MockTimeSheetPort) FindByUsernameAndDay(username, day string) (*model.TimeSheet, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindByUserIDAndDay", userId, day)
+	ret := m.ctrl.Call(m, "FindByUsernameAndDay", username, day)
 	ret0, _ := ret[0].(*model.TimeSheet)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// FindByUserIDAndDay indicates an expected call of FindByUserIDAndDay.
-func (mr *MockTimeSheetPortMockRecorder) FindByUserIDAndDay(userId, day any) *gomock.Call {
+// FindByUsernameAndDay indicates an expected call of FindByUsernameAndDay.
+func (mr *MockTimeSheetPortMockRecorder) FindByUsernameAndDay(username, day any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByUserIDAndDay", reflect.TypeOf((*MockTimeSheetPort)(nil).FindByUserIDAndDay), userId, day)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByUsernameAndDay", reflect.TypeOf((*MockTimeSheetPort)(nil).FindByUsernameAndDay), username, day)
 }
 
 // Save mocks base method.

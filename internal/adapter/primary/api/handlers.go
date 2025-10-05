@@ -23,10 +23,10 @@ func (a *Application) GetTimeSheets(c *gin.Context) {
 		return
 	}
 
-	// For simplicity, we use a hardcoded user ID
-	timeSheets, err := a.board.GetTimeSheets(1, params.From, params.To)
+	username := c.GetString("username")
+	timeSheets, err := a.board.GetTimeSheets(username, params.From, params.To)
 	if err != nil {
-		slog.Error("Error while getting timesheets", "error", err)
+		slog.Error("Error while getting timesheets for user", "username", username, "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal-server-error"})
 		return
 	}
@@ -40,14 +40,14 @@ func (a *Application) GetTimeSheet(c *gin.Context) {
 		return
 	}
 
-	// For simplicity, we use a hardcoded user ID
-	timeSheet, err := a.board.GetTimeSheet(1, int64(id))
+	username := c.GetString("username")
+	timeSheet, err := a.board.GetTimeSheet(username, int64(id))
 	if err != nil {
 		if _, ok := err.(*model.NotFoundError); ok {
 			c.JSON(http.StatusNotFound, ErrorResponse{Error: err.(*model.NotFoundError).ErrorCode()})
 			return
 		}
-		slog.Error("Error while getting timesheet", "error", err)
+		slog.Error("Error while getting timesheet for user", "username", username, "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal-server-error"})
 		return
 	}
@@ -60,14 +60,15 @@ func (a *Application) CreateTimeSheet(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	// For simplicity, we use a hardcoded user ID
-	id, err := a.board.SaveTimeSheet(1, req.Day, req.Hours)
+
+	username := c.GetString("username")
+	id, err := a.board.SaveTimeSheet(username, req.Day, req.Hours)
 	if err != nil {
 		if _, ok := err.(*model.AlreadExistsError); ok {
 			c.JSON(http.StatusConflict, ErrorResponse{Error: err.(*model.AlreadExistsError).ErrorCode()})
 			return
 		}
-		slog.Error("Error while saving timesheet", "error", err)
+		slog.Error("Error while saving timesheet for user", "username", username, "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal-server-error"})
 		return
 	}
@@ -93,13 +94,14 @@ func (a *Application) PatchTimeSheet(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	// For simplicity, we use a hardcoded user ID
-	if err := a.board.UpdateTimeSheetHours(1, int64(id), req.Hours); err != nil {
+
+	username := c.GetString("username")
+	if err := a.board.UpdateTimeSheetHours(username, int64(id), req.Hours); err != nil {
 		if _, ok := err.(*model.NotFoundError); ok {
 			c.JSON(http.StatusNotFound, ErrorResponse{Error: err.(*model.NotFoundError).ErrorCode()})
 			return
 		}
-		slog.Error("Error while updating timesheet", "error", err)
+		slog.Error("Error while updating timesheet for user", "username", username, "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal-server-error"})
 		return
 	}
@@ -113,13 +115,13 @@ func (a *Application) DeleteTimeSheet(c *gin.Context) {
 		return
 	}
 
-	// For simplicity, we use a hardcoded user ID
-	if err := a.board.DeleteTimeSheet(1, int64(id)); err != nil {
+	username := c.GetString("username")
+	if err := a.board.DeleteTimeSheet(username, int64(id)); err != nil {
 		if _, ok := err.(*model.NotFoundError); ok {
 			c.JSON(http.StatusNotFound, ErrorResponse{Error: err.(*model.NotFoundError).ErrorCode()})
 			return
 		}
-		slog.Error("Error while deleting timesheet", "error", err)
+		slog.Error("Error while deleting timesheet for user", "username", username, "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal-server-error"})
 		return
 	}
