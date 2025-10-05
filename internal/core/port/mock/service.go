@@ -41,74 +41,74 @@ func (m *MockBoardManager) EXPECT() *MockBoardManagerMockRecorder {
 }
 
 // DeleteTimeSheet mocks base method.
-func (m *MockBoardManager) DeleteTimeSheet(userId, timeSheetID int64) error {
+func (m *MockBoardManager) DeleteTimeSheet(username string, timeSheetID int64) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteTimeSheet", userId, timeSheetID)
+	ret := m.ctrl.Call(m, "DeleteTimeSheet", username, timeSheetID)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // DeleteTimeSheet indicates an expected call of DeleteTimeSheet.
-func (mr *MockBoardManagerMockRecorder) DeleteTimeSheet(userId, timeSheetID any) *gomock.Call {
+func (mr *MockBoardManagerMockRecorder) DeleteTimeSheet(username, timeSheetID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTimeSheet", reflect.TypeOf((*MockBoardManager)(nil).DeleteTimeSheet), userId, timeSheetID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTimeSheet", reflect.TypeOf((*MockBoardManager)(nil).DeleteTimeSheet), username, timeSheetID)
 }
 
 // GetTimeSheet mocks base method.
-func (m *MockBoardManager) GetTimeSheet(userId, timeSheetID int64) (*model.TimeSheet, error) {
+func (m *MockBoardManager) GetTimeSheet(username string, timeSheetID int64) (*model.TimeSheet, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetTimeSheet", userId, timeSheetID)
+	ret := m.ctrl.Call(m, "GetTimeSheet", username, timeSheetID)
 	ret0, _ := ret[0].(*model.TimeSheet)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetTimeSheet indicates an expected call of GetTimeSheet.
-func (mr *MockBoardManagerMockRecorder) GetTimeSheet(userId, timeSheetID any) *gomock.Call {
+func (mr *MockBoardManagerMockRecorder) GetTimeSheet(username, timeSheetID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTimeSheet", reflect.TypeOf((*MockBoardManager)(nil).GetTimeSheet), userId, timeSheetID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTimeSheet", reflect.TypeOf((*MockBoardManager)(nil).GetTimeSheet), username, timeSheetID)
 }
 
 // GetTimeSheets mocks base method.
-func (m *MockBoardManager) GetTimeSheets(userId int64, from, to string) ([]*model.TimeSheet, error) {
+func (m *MockBoardManager) GetTimeSheets(username, from, to string) ([]*model.TimeSheet, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetTimeSheets", userId, from, to)
+	ret := m.ctrl.Call(m, "GetTimeSheets", username, from, to)
 	ret0, _ := ret[0].([]*model.TimeSheet)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetTimeSheets indicates an expected call of GetTimeSheets.
-func (mr *MockBoardManagerMockRecorder) GetTimeSheets(userId, from, to any) *gomock.Call {
+func (mr *MockBoardManagerMockRecorder) GetTimeSheets(username, from, to any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTimeSheets", reflect.TypeOf((*MockBoardManager)(nil).GetTimeSheets), userId, from, to)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTimeSheets", reflect.TypeOf((*MockBoardManager)(nil).GetTimeSheets), username, from, to)
 }
 
 // SaveTimeSheet mocks base method.
-func (m *MockBoardManager) SaveTimeSheet(userId int64, day string, hours float64) (int64, error) {
+func (m *MockBoardManager) SaveTimeSheet(username, day string, hours float64) (int64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SaveTimeSheet", userId, day, hours)
+	ret := m.ctrl.Call(m, "SaveTimeSheet", username, day, hours)
 	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // SaveTimeSheet indicates an expected call of SaveTimeSheet.
-func (mr *MockBoardManagerMockRecorder) SaveTimeSheet(userId, day, hours any) *gomock.Call {
+func (mr *MockBoardManagerMockRecorder) SaveTimeSheet(username, day, hours any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveTimeSheet", reflect.TypeOf((*MockBoardManager)(nil).SaveTimeSheet), userId, day, hours)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveTimeSheet", reflect.TypeOf((*MockBoardManager)(nil).SaveTimeSheet), username, day, hours)
 }
 
 // UpdateTimeSheetHours mocks base method.
-func (m *MockBoardManager) UpdateTimeSheetHours(userId, timeSheetID int64, hours float64) error {
+func (m *MockBoardManager) UpdateTimeSheetHours(username string, timeSheetID int64, hours float64) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateTimeSheetHours", userId, timeSheetID, hours)
+	ret := m.ctrl.Call(m, "UpdateTimeSheetHours", username, timeSheetID, hours)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // UpdateTimeSheetHours indicates an expected call of UpdateTimeSheetHours.
-func (mr *MockBoardManagerMockRecorder) UpdateTimeSheetHours(userId, timeSheetID, hours any) *gomock.Call {
+func (mr *MockBoardManagerMockRecorder) UpdateTimeSheetHours(username, timeSheetID, hours any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTimeSheetHours", reflect.TypeOf((*MockBoardManager)(nil).UpdateTimeSheetHours), userId, timeSheetID, hours)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTimeSheetHours", reflect.TypeOf((*MockBoardManager)(nil).UpdateTimeSheetHours), username, timeSheetID, hours)
 }
