@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"math/big"
 	"net/http"
 	"strings"
@@ -13,7 +14,7 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-func JWTMiddleware(jwkSet map[string]*rsa.PublicKey) gin.HandlerFunc {
+func JWTMiddleware(keycloakServerUrl string, keycloakRealm string, jwkSet map[string]*rsa.PublicKey) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 
@@ -38,6 +39,8 @@ func JWTMiddleware(jwkSet map[string]*rsa.PublicKey) gin.HandlerFunc {
 			// Retrieve the public key from the JWK set using the key ID
 			publicKey, keyExists := jwkSet[kid]
 			if !keyExists {
+				c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+				c.Abort()
 				return nil, fmt.Errorf("public key not found for kid: %v", kid)
 			}
 
@@ -45,13 +48,14 @@ func JWTMiddleware(jwkSet map[string]*rsa.PublicKey) gin.HandlerFunc {
 		})
 
 		if err != nil || !token.Valid {
+			slog.Error("Invalid token", "error", err)
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 			c.Abort()
 			return
 		}
 
 		// Check issuer claim
-		if iss, ok := token.Claims.(jwt.MapClaims)["iss"].(string); !ok || iss != "http://auth.localhost/realms/freeboard" {
+		if iss, ok := token.Claims.(jwt.MapClaims)["iss"].(string); !ok || iss != fmt.Sprintf("%s/realms/%s", keycloakServerUrl, keycloakRealm) {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token issuer"})
 			c.Abort()
 			return
@@ -62,9 +66,8 @@ func JWTMiddleware(jwkSet map[string]*rsa.PublicKey) gin.HandlerFunc {
 	}
 }
 
-func GetJWKSet(url string) (map[string]*rsa.PublicKey, error) {
-	// Make the GET request
-	response, err := http.Get(url)
+func GetJWKSet(keycloakServerUrl string, keycloakRealm string) (map[string]*rsa.PublicKey, error) {
+	response, err := http.Get(fmt.Sprintf("%s/realms/%s/protocol/openid-connect/certs", keycloakServerUrl, keycloakRealm))
 	if err != nil {
 		return nil, fmt.Errorf("error making GET request: %v", err)
 	}
@@ -87,9 +90,7 @@ func GetJWKSet(url string) (map[string]*rsa.PublicKey, error) {
 	// Create a map to store RSA public keys
 	jwkMap := make(map[string]*rsa.PublicKey)
 
-	// Iterate through each key in the JWK set
 	for _, key := range jwkSet.Keys {
-		// Decode base64url-encoded modulus (N) and exponent (E)
 		modulus, err := decodeBase64URL(key.N)
 		if err != nil {
 			return nil, fmt.Errorf("error decoding modulus: %v", err)
@@ -100,13 +101,11 @@ func GetJWKSet(url string) (map[string]*rsa.PublicKey, error) {
 			return nil, fmt.Errorf("error decoding exponent: %v", err)
 		}
 
-		// Create RSA public key
 		pubKey := &rsa.PublicKey{
 			N: modulus,
 			E: int(exponent.Int64()),
 		}
 
-		// Store the public key in the map using the key ID (Kid)
 		jwkMap[key.Kid] = pubKey
 	}
 

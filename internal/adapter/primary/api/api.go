@@ -17,7 +17,7 @@ func NewApplication(board port.BoardManager) *Application {
 	return &Application{board: board}
 }
 
-func (a *Application) StartServer() (err error) {
+func (a *Application) StartServer(keycloakServerUrl string, keycloakRealm string) (err error) {
 	router := gin.New()
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
@@ -29,7 +29,7 @@ func (a *Application) StartServer() (err error) {
 		AllowCredentials: true,
 	}))
 
-	jwkSet, err := GetJWKSet("http://auth.localhost/realms/freeboard/protocol/openid-connect/certs")
+	jwkSet, err := GetJWKSet(keycloakServerUrl, keycloakRealm)
 	if err != nil {
 		slog.Error("Failed to get JWK set", slog.String("error", err.Error()))
 		return fmt.Errorf("failed to get JWK set: %w", err)
@@ -38,7 +38,7 @@ func (a *Application) StartServer() (err error) {
 	router.GET("/health", a.HealthCheck)
 
 	apiV1 := router.Group("/api/v1")
-	apiV1.Use(JWTMiddleware(jwkSet))
+	apiV1.Use(JWTMiddleware(keycloakServerUrl, keycloakRealm, jwkSet))
 	{
 		apiV1.GET("/timesheets", a.GetTimeSheets)
 		apiV1.GET("/timesheets/:id", a.GetTimeSheet)
